@@ -8,6 +8,6 @@ namespace orbits_generator
 {
     struct Orbit
     {
-        List<int> elements;
+        public List<int> elements;
     }
 }
