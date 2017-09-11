@@ -60,6 +60,7 @@ namespace orbits_generator
         {
             Orbit current_orbit = new Orbit();
             current_orbit.elements = new List<int>();
+            current_orbit.cycles = 0;
             int next_element = int.MinValue;
             int current_element;
 
@@ -76,11 +77,13 @@ namespace orbits_generator
                 if (next_element != start_pos && next_element <= n)
                 {
                     current_orbit.elements.Add(next_element);
+                    current_orbit.cycles++;
                     current_element = next_element;
                 }
                 else if (next_element == start_pos)
                 {
                     current_orbit.elements.Add(start_pos);
+                    current_orbit.cycles++;
                     orbits.Add(current_orbit);
 
                     if (series.Count > 0)
@@ -109,6 +112,7 @@ namespace orbits_generator
         {
             foreach (var orbit in orbits)
             {
+                Console.WriteLine("Orbit:");
                 int orbit_size = orbit.elements.Count;
                 int element_place = 0;
                 foreach(var element in orbit.elements)
@@ -118,6 +122,7 @@ namespace orbits_generator
                     if (element_place < orbit_size) Console.Write(" -> ");
                     else Console.Write("\n");
                 }
+                Console.WriteLine($"Orbit Size: {orbit.cycles} cycles\n");
             }
         }
     }

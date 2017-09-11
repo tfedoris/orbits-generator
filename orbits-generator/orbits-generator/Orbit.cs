@@ -9,5 +9,6 @@ namespace orbits_generator
     struct Orbit
     {
         public List<int> elements;
+        public int cycles;
     }
 }
