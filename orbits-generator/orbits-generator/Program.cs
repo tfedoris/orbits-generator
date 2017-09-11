@@ -10,7 +10,7 @@ namespace orbits_generator
     {
         static void Main(string[] args)
         {
-            Orbit_Generator test = new Orbit_Generator(0, 7, 1, 16, 1, true, false, false);
+            Orbit_Generator test = new Orbit_Generator(1, 3, 1, 2, 7, false, false, true);
             test.Generate_Orbit();
             test.Print_Orbits();
         }

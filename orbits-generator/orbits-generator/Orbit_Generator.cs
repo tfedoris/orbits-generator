@@ -121,6 +121,7 @@ namespace orbits_generator
                     Console.Write(element);
                     if (element_place < orbit_size) Console.Write(" -> ");
                     else Console.Write("\n");
+                    if (element_place % 10 == 0) Console.WriteLine();
                 }
                 Console.WriteLine($"Orbit Size: {orbit.cycles} cycles\n");
             }
