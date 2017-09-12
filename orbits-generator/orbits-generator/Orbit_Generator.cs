@@ -126,5 +126,21 @@ namespace orbits_generator
                 Console.WriteLine($"Orbit Size: {orbit.cycles} cycles\n");
             }
         }
+
+        public void Print_Inverses()
+        {
+            Console.WriteLine("Inverses:");
+            for (int i = 1; i < series.Count; i++)
+            {
+                for (int j = 0; j < series.Count; j++)
+                {
+                    if ((series[i] * series[j]) % n == 1)
+                    {
+                        Console.WriteLine($"{series[i]} <-> {series[j]}");
+                    }
+                }
+            }
+            Console.WriteLine();
+        }
     }
 }
