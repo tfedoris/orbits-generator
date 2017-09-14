@@ -78,6 +78,7 @@ namespace orbits_generator
             test.Print_Inverses();
             test.Generate_Orbit();
             test.Print_Orbits();
+            test.Print_Whiskers();
             Console.Write("Press any key to exit...");
             Console.Read();
         }
