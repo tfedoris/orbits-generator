@@ -157,7 +157,7 @@ namespace orbits_generator
         {
             foreach (var orbit in orbits)
             {
-                Console.WriteLine("Orbit:");
+                Console.WriteLine("\nOrbit:");
                 int orbit_size = orbit.elements.Count;
                 int element_place = 0;
                 foreach(var element in orbit.elements)
@@ -174,6 +174,7 @@ namespace orbits_generator
                     Console.WriteLine($"Orbit Size: {orbit_size - 1} fixed point");
 
                 Console.WriteLine($"Whiskers: {orbit.whisker_count}\n");
+                Console.WriteLine("----------------------------------------");
             }
 
             if (whiskers.Count > 0) Print_Whiskers();
@@ -181,6 +182,7 @@ namespace orbits_generator
 
         public void Print_Inverses()
         {
+            Console.WriteLine("----------------------------------------\n");
             Console.WriteLine("Inverses:");
             for (int i = 1; i < series.Count; i++)
             {
@@ -192,17 +194,24 @@ namespace orbits_generator
                     }
                 }
             }
-            Console.WriteLine();
+            Console.WriteLine("\n----------------------------------------");
         }
 
         private void Print_Whiskers()
         {
-            Console.WriteLine($"All Whiskers ({whiskers.Count}):");
+            Console.WriteLine($"Total Whiskers : {whiskers.Count}");
             whiskers.Sort();
+            var whisker_change_indicator = -1;
             foreach (Whisker whisker in whiskers)
+            {
+                if (whisker.ConnectedValue > whisker_change_indicator)
+                {
+                    whisker_change_indicator = whisker.ConnectedValue;
+                    Console.WriteLine("----------------------------------------");
+                }
                 Console.WriteLine(whisker.ToString());
-
-            Console.WriteLine();
+            }
+            Console.WriteLine("----------------------------------------\n");
         }
     }
 }
