@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace orbits_generator
 {
-    struct Orbit
+    public class Orbit
     {
         public List<int> elements;
-        public int cycles;
+        public int whisker_count;
+
+        public Orbit()
+        {
+            elements = new List<int>();
+            whisker_count = 0;
+        }
     }
 }

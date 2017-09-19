@@ -61,8 +61,6 @@ namespace orbits_generator
         public void Generate_Orbit()
         {
             Orbit current_orbit = new Orbit();
-            current_orbit.elements = new List<int>();
-            current_orbit.cycles = 0;
             int next_element = int.MinValue;
             int current_element;
 
@@ -82,6 +80,7 @@ namespace orbits_generator
                     {
                         series.Remove(next_element);
                         current_orbit.elements.Add(start_pos);
+                        
                     }
                     current_orbit.elements.Add(next_element);
                     orbits.Add(current_orbit);
@@ -98,10 +97,11 @@ namespace orbits_generator
 
                         Whisker new_whisker = new Whisker
                         {
-                            whisker_value = start_pos,
-                            connected_value = current_orbit.elements[0]
+                            WhiskerValue = start_pos,
+                            ConnectedValue = current_orbit.elements[0]
                         };
                         whiskers.Add(new_whisker);
+                        current_orbit.whisker_count++;
                         if (series.Count > 0) Generate_Orbit();
                     }
                     else
@@ -112,6 +112,7 @@ namespace orbits_generator
                             if (orbit.elements.Exists(e => e.Equals(next_element)))
                             {
                                 in_orbit = true;
+                                orbit.whisker_count++;
                                 break;
                             }
                         }
@@ -122,10 +123,11 @@ namespace orbits_generator
                             if (series.Exists(s => s.Equals(start_pos))) series.Remove(current_element);
                             Whisker new_whisker = new Whisker
                             {
-                                whisker_value = current_element,
-                                connected_value = next_element,
+                                WhiskerValue = current_element,
+                                ConnectedValue = next_element,
                             };
                             whiskers.Add(new_whisker);
+                            current_orbit.whisker_count++;
                             if (series.Count > 0) Generate_Orbit();
                         }
                         else
@@ -138,36 +140,6 @@ namespace orbits_generator
                 }
             } while (series.Count > 0);
 
-            /*
-            while (series.Count > 0)
-            {
-                if (series.Exists(s => s.Equals(current_element))) series.Remove(current_element);
-
-                next_element = (a * (int)Math.Pow(current_element, 2)) + (b * current_element) + c;
-                next_element %= n;
-
-                if (next_element != start_pos && next_element <= n)
-                {
-                    current_orbit.elements.Add(next_element);
-                    current_orbit.cycles++;
-                    current_element = next_element;
-                }
-                else if (next_element == start_pos)
-                {
-                    current_orbit.elements.Add(start_pos);
-                    current_orbit.cycles++;
-                    orbits.Add(current_orbit);
-
-                    if (series.Count > 0)
-                    {
-                        start_pos = series[0];
-                        current_element = start_pos;
-                        Generate_Orbit();
-                    }
-                    return;
-                }
-            }
-            */
             return;
         }
 
@@ -196,8 +168,15 @@ namespace orbits_generator
                     else Console.Write("\n");
                     if (element_place % 10 == 0) Console.WriteLine();
                 }
-                Console.WriteLine($"Orbit Size: {orbit.cycles} cycles\n");
+                if (orbit_size - 1 > 1)
+                    Console.WriteLine($"Orbit Size: {orbit_size - 1} cycles");
+                else
+                    Console.WriteLine($"Orbit Size: {orbit_size - 1} fixed point");
+
+                Console.WriteLine($"Whiskers: {orbit.whisker_count}\n");
             }
+
+            if (whiskers.Count > 0) Print_Whiskers();
         }
 
         public void Print_Inverses()
@@ -216,11 +195,12 @@ namespace orbits_generator
             Console.WriteLine();
         }
 
-        public void Print_Whiskers()
+        private void Print_Whiskers()
         {
-            Console.WriteLine("Whiskers:");
+            Console.WriteLine($"All Whiskers ({whiskers.Count}):");
+            whiskers.Sort();
             foreach (Whisker whisker in whiskers)
-                Console.WriteLine($"{whisker.whisker_value} -> {whisker.connected_value}");
+                Console.WriteLine(whisker.ToString());
         }
     }
 }
