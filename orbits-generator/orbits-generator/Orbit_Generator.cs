@@ -201,6 +201,8 @@ namespace orbits_generator
             whiskers.Sort();
             foreach (Whisker whisker in whiskers)
                 Console.WriteLine(whisker.ToString());
+
+            Console.WriteLine();
         }
     }
 }
