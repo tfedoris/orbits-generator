@@ -71,7 +71,7 @@ namespace orbits_generator
             current_orbit.elements.Add(current_element);
             series.Remove(current_element);
 
-            while (series.Count > 0)
+            do
             {
                 next_element = (a * (int)Math.Pow(current_element, 2)) + (b * current_element) + c;
                 next_element %= n;
@@ -85,7 +85,7 @@ namespace orbits_generator
                     }
                     current_orbit.elements.Add(next_element);
                     orbits.Add(current_orbit);
-                    Generate_Orbit();
+                    if (series.Count > 0) Generate_Orbit();
                 }
                 else
                 {
@@ -102,7 +102,7 @@ namespace orbits_generator
                             connected_value = current_orbit.elements[0]
                         };
                         whiskers.Add(new_whisker);
-                        Generate_Orbit();
+                        if (series.Count > 0) Generate_Orbit();
                     }
                     else
                     {
@@ -118,7 +118,7 @@ namespace orbits_generator
 
                         if (in_orbit)
                         {
-                           
+
                             if (series.Exists(s => s.Equals(start_pos))) series.Remove(current_element);
                             Whisker new_whisker = new Whisker
                             {
@@ -126,7 +126,7 @@ namespace orbits_generator
                                 connected_value = next_element,
                             };
                             whiskers.Add(new_whisker);
-                            Generate_Orbit();
+                            if (series.Count > 0) Generate_Orbit();
                         }
                         else
                         {
@@ -136,7 +136,7 @@ namespace orbits_generator
                         }
                     }
                 }
-            }
+            } while (series.Count > 0);
 
             /*
             while (series.Count > 0)
