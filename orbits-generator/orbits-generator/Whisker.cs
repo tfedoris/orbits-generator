@@ -8,6 +8,8 @@ namespace orbits_generator
 {
     public class Whisker : IEquatable<Whisker>, IComparable<Whisker>
     {
+        public bool connected_to_orbit = true;
+
         public int WhiskerValue { get; set; }
 
         public int ConnectedValue { get; set; }
