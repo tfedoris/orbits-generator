@@ -60,15 +60,15 @@ namespace orbits_generator
             switch (series_choice)
             {
                 case Series_Choices.All_Real:
-                    Console.WriteLine("The series will use all real numbers.");
+                    Console.WriteLine("The series will use all real numbers from 0 to n^k - 1.");
                     all_real = true;
                     break;
                 case Series_Choices.Odd:
-                    Console.WriteLine("The series will use all odd numbers.");
+                    Console.WriteLine("The series will use all odd numbers from 1 to n^k - 1.");
                     odd = true;
                     break;
                 case Series_Choices.Even:
-                    Console.WriteLine("The series will use all even numbers.");
+                    Console.WriteLine("The series will use all even numbers from 2 to n^k - 1.");
                     even = true;
                     break;
             }
