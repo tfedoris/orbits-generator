@@ -39,9 +39,9 @@ namespace orbits_generator
                 valid_choice = true;
 
                 Console.WriteLine("Please Choose Number Series for X:");
-                Console.WriteLine("1 - All Real Numbers up to N^K");
-                Console.WriteLine("2 - All Odd Numbers up to N^K");
-                Console.WriteLine("3 - All Even Numbers up to N^K");
+                Console.WriteLine("1 - All Real Numbers from 0 to N^K - 1");
+                Console.WriteLine("2 - All Odd Numbers from 1 to N^K - 1");
+                Console.WriteLine("3 - All Even Numbers from 2 to N^K - 1");
                 Console.WriteLine();
 
                 Console.Write("Your choice: ");
@@ -73,11 +73,22 @@ namespace orbits_generator
                     break;
             }
 
+            Console.Write("\nWould you like to print inverses? (Y/N): ");
+            choice_string = Console.ReadLine();
+            choice_string = choice_string.ToUpper();
+            bool print_inverse = false;
+
+            if (choice_string[0] == 'Y')
+            {
+                print_inverse = true;
+            }
+
             Console.WriteLine();
             Orbit_Generator test = new Orbit_Generator(a, b, c, n, k, all_real, even, odd);
-            test.Print_Inverses();
+            if (print_inverse) test.Print_Inverses();
             test.Generate_Orbit();
             test.Print_Orbits();
+            test.Print_Analytics();
             Console.Write("Press any key to exit...");
             Console.Read();
         }
