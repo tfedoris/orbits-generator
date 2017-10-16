@@ -148,6 +148,13 @@ namespace orbits_generator
         {
             foreach (var orbit in orbits)
             {
+                orbit.cycles = orbit.elements.Count - 1;
+            }
+
+            orbits.Sort();
+
+            foreach (var orbit in orbits)
+            {
                 Console.WriteLine("\nOrbit:");
                 int orbit_size = orbit.elements.Count;
                 int element_place = 0;
@@ -159,10 +166,10 @@ namespace orbits_generator
                     else Console.Write("\n");
                     if (element_place % 10 == 0) Console.WriteLine();
                 }
-                if (orbit_size - 1 > 1)
-                    Console.WriteLine($"Orbit Size: {orbit_size - 1} cycles");
+                if (orbit.cycles > 1)
+                    Console.WriteLine($"Orbit Size: {orbit.cycles} cycles");
                 else
-                    Console.WriteLine($"Orbit Size: {orbit_size - 1} fixed point");
+                    Console.WriteLine($"Orbit Size: {orbit.cycles} fixed point");
 
                 Console.WriteLine($"Whiskers: {orbit.whisker_count}\n");
                 Console.WriteLine("----------------------------------------");
@@ -204,7 +211,6 @@ namespace orbits_generator
                 if (!whisker.connected_to_orbit) Console.WriteLine("*");
                 else Console.WriteLine();
             }
-            Console.WriteLine("----------------------------------------\n");
         }
 
         private void Remove_From_Series(Orbit orbit)
@@ -213,6 +219,32 @@ namespace orbits_generator
             {
                 if (series.Exists(s => s.Equals(element))) series.Remove(element);
             }
+        }
+
+        public void Print_Analytics()
+        {
+            Console.WriteLine("\n----------------------------------------");
+            Console.WriteLine("Orbit Analytics");
+            Console.WriteLine("----------------------------------------");
+
+            int current_orbit_size = orbits[0].cycles;
+            int count = 0;
+
+            foreach (var orbit in orbits)
+            {
+                if (orbit.cycles != current_orbit_size)
+                {
+                    if (current_orbit_size == 1)
+                        Console.WriteLine($"Fixed Points: {count}");
+                    else
+                        Console.WriteLine($"{current_orbit_size}-Cycle Orbits: {count}");
+                    current_orbit_size = orbit.cycles;
+                    count = 1;
+                }
+                else count++;
+            }
+            Console.WriteLine($"{current_orbit_size}-Cycle Orbits: {count}");
+            Console.WriteLine("----------------------------------------\n");
         }
 
         private void Close_Orbit()
