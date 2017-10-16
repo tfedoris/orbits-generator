@@ -9,9 +9,10 @@ namespace orbits_generator
     class Orbit_Generator
     {
         private int a, b, c, n; //variables for (ax^2 + bx + c) % n
-        private int start_element;
+        private int start_element, current_element, next_element;
         private int offset;
         private bool all_real, even, odd;
+        private Orbit current_orbit;
         private List<Orbit> orbits;
         private List<Whisker> whiskers;
         private List<int> series;
@@ -60,9 +61,8 @@ namespace orbits_generator
 
         public void Generate_Orbit()
         {
-            Orbit current_orbit = new Orbit();
-            int next_element = int.MinValue;
-            int current_element;
+            current_orbit = new Orbit();
+            next_element = int.MinValue;
 
             start_element = series[0];
             current_element = start_element;
@@ -75,22 +75,16 @@ namespace orbits_generator
 
                 if (next_element == start_element)
                 {
-                    current_orbit.elements.Add(next_element);
-                    orbits.Add(current_orbit);
-                    Remove_From_Series(current_orbit);
-                    if (series.Count > 0) Generate_Orbit();
+                    Close_Orbit();
                 }
                 else
                 {
                     if (current_orbit.elements.Exists(e => e.Equals(next_element)))
                     {
-                        current_orbit.elements.Add(next_element);
                         var start_el_index = current_orbit.elements.FindIndex(e => e.Equals(start_element));
                         var next_el_index = current_orbit.elements.FindIndex(e => e.Equals(next_element));
                         current_orbit.elements.RemoveRange(start_el_index, next_el_index - start_el_index);
-                        orbits.Add(current_orbit);
-                        Remove_From_Series(current_orbit);
-                        if (series.Count > 0) Generate_Orbit();
+                        Close_Orbit();
                     }
                     else
                     {
@@ -107,15 +101,7 @@ namespace orbits_generator
 
                         if (in_orbit)
                         {
-
-                            if (series.Exists(s => s.Equals(current_element))) series.Remove(current_element);
-                            Whisker new_whisker = new Whisker
-                            {
-                                WhiskerValue = current_element,
-                                ConnectedValue = next_element,
-                            };
-                            whiskers.Add(new_whisker);
-                            if (series.Count > 0) Generate_Orbit();
+                            Create_Whisker();
                         }
                         else
                         {
@@ -132,15 +118,7 @@ namespace orbits_generator
 
                             if (in_whiskers)
                             {
-                                if (series.Exists(s => s.Equals(current_element))) series.Remove(current_element);
-                                Whisker new_whisker = new Whisker
-                                {
-                                    WhiskerValue = current_element,
-                                    ConnectedValue = next_element,
-                                    connected_to_orbit = false
-                                };
-                                whiskers.Add(new_whisker);
-                                if (series.Count > 0) Generate_Orbit();
+                                Create_Whisker();
                             }
 
                             else
@@ -235,6 +213,26 @@ namespace orbits_generator
             {
                 if (series.Exists(s => s.Equals(element))) series.Remove(element);
             }
+        }
+
+        private void Close_Orbit()
+        {
+            current_orbit.elements.Add(next_element);
+            orbits.Add(current_orbit);
+            Remove_From_Series(current_orbit);
+            if (series.Count > 0) Generate_Orbit();
+        }
+
+        private void Create_Whisker()
+        {
+            if (series.Exists(s => s.Equals(current_element))) series.Remove(current_element);
+            Whisker new_whisker = new Whisker
+            {
+                WhiskerValue = current_element,
+                ConnectedValue = next_element,
+            };
+            whiskers.Add(new_whisker);
+            if (series.Count > 0) Generate_Orbit();
         }
     }
 }
