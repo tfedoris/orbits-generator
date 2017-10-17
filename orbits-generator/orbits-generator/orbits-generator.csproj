@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Node.cs" />
     <Compile Include="Orbit.cs" />
     <Compile Include="Orbit_Generator.cs" />
     <Compile Include="Program.cs" />

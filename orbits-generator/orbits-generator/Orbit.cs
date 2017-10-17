@@ -8,13 +8,15 @@ namespace orbits_generator
 {
     public class Orbit : IEquatable<Orbit>, IComparable<Orbit>
     {
-        public List<int> elements;
+        private List<Node> elements;
         public int whisker_count;
         public int cycles;
 
+        internal List<Node> Elements { get => elements; set => elements = value; }
+
         public Orbit()
         {
-            elements = new List<int>();
+            Elements = new List<Node>();
             whisker_count = 0;
             cycles = 0;
         }
