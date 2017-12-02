@@ -14,6 +14,9 @@ namespace orbits_generator
         {
             int a, b, c, n, k;
             bool all_real, odd, even;
+            string currentDir = AppDomain.CurrentDomain.BaseDirectory;
+            string pathString = System.IO.Path.Combine(currentDir, "Orbits");
+            System.IO.Directory.CreateDirectory(pathString);
 
             all_real = odd = even = false;
 
@@ -29,6 +32,9 @@ namespace orbits_generator
             Console.Write("Enter K: ");
             k = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine();
+
+            string fileName = a + "x^2+" + b + "x+" + c + "(mod" + n + "^" + k + ").txt";
+            pathString = System.IO.Path.Combine(pathString, fileName);
 
             bool valid_choice;
             string choice_string;
@@ -84,7 +90,7 @@ namespace orbits_generator
             }
 
             Console.WriteLine();
-            Orbit_Generator test = new Orbit_Generator(a, b, c, n, k, all_real, even, odd);
+            Orbit_Generator test = new Orbit_Generator(a, b, c, n, k, all_real, even, odd, pathString);
             if (print_inverse) test.Print_Inverses();
             test.Generate_Orbit();
             test.Print_Orbits();

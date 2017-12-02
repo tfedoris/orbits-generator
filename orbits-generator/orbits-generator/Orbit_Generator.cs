@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,7 @@ namespace orbits_generator
         private List<Orbit> orbits;
         private List<Whisker> whiskers;
         private List<int> series;
+        private string pathString;
 
         Orbit_Generator()
         {
@@ -28,9 +30,10 @@ namespace orbits_generator
             all_real = even = odd = false;
             orbits = null;
             series = null;
+            pathString = "";
         }
 
-        public Orbit_Generator(int a, int b, int c, int n, int k, bool all_real, bool even, bool odd)
+        public Orbit_Generator(int a, int b, int c, int n, int k, bool all_real, bool even, bool odd, string pathString)
         {
             this.a = a;
             this.b = b;
@@ -39,9 +42,18 @@ namespace orbits_generator
             this.all_real = all_real;
             this.even = even;
             this.odd = odd;
+            this.pathString = pathString;
             orbits = new List<Orbit>();
             whiskers = new List<Whisker>();
             series = new List<int>();
+
+            if (!File.Exists(pathString))
+            {
+                using (StreamWriter sw = File.CreateText(pathString))
+                {
+                    sw.WriteLine($"For {a}x^2 + {b}x + {c} (mod {n}^{k}):\n");
+                }
+            }
 
             if (all_real)
             {
@@ -164,24 +176,27 @@ namespace orbits_generator
 
             foreach (var orbit in orbits)
             {
-                Console.WriteLine("\nOrbit:");
-                int orbit_size = orbit.Elements.Count;
-                int element_place = 0;
-                foreach(var element in orbit.Elements)
+                using (StreamWriter sw = File.AppendText(pathString))
                 {
-                    element_place++;
-                    Console.Write(element.value);
-                    if (element_place < orbit_size) Console.Write(" -> ");
-                    else Console.Write("\n");
-                    if (element_place % 10 == 0) Console.WriteLine();
-                }
-                if (orbit.cycles > 1)
-                    Console.WriteLine($"Orbit Size: {orbit.cycles} cycles");
-                else
-                    Console.WriteLine($"Orbit Size: {orbit.cycles} fixed point");
+                    sw.WriteLine("\nOrbit:");
+                    int orbit_size = orbit.Elements.Count;
+                    int element_place = 0;
+                    foreach (var element in orbit.Elements)
+                    {
+                        element_place++;
+                        sw.Write(element.value);
+                        if (element_place < orbit_size) sw.Write(" -> ");
+                        else sw.Write("\n");
+                        if (element_place % 10 == 0) sw.WriteLine();
+                    }
+                    if (orbit.cycles > 1)
+                        sw.WriteLine($"Orbit Size: {orbit.cycles} cycles");
+                    else
+                        sw.WriteLine($"Orbit Size: {orbit.cycles} fixed point");
 
-                Console.WriteLine($"Whiskers: {orbit.whisker_count}\n");
-                Console.WriteLine("----------------------------------------");
+                    sw.WriteLine($"Whiskers: {orbit.whisker_count}\n");
+                    sw.WriteLine("----------------------------------------");
+                }
             }
 
             if (whiskers.Count > 0) Print_Whiskers();
@@ -189,36 +204,42 @@ namespace orbits_generator
 
         public void Print_Inverses()
         {
-            Console.WriteLine("----------------------------------------\n");
-            Console.WriteLine("Inverses:");
-            for (int i = 1; i < series.Count; i++)
+            using (StreamWriter sw = File.AppendText(pathString))
             {
-                for (int j = 0; j < series.Count; j++)
+                sw.WriteLine("----------------------------------------\n");
+                sw.WriteLine("Inverses:");
+                for (int i = 1; i < series.Count; i++)
                 {
-                    if ((series[i] * series[j]) % n == 1)
+                    for (int j = 0; j < series.Count; j++)
                     {
-                        Console.WriteLine($"{series[i]} <-> {series[j]}");
+                        if ((series[i] * series[j]) % n == 1)
+                        {
+                            sw.WriteLine($"{series[i]} <-> {series[j]}");
+                        }
                     }
                 }
+                sw.WriteLine("\n----------------------------------------");
             }
-            Console.WriteLine("\n----------------------------------------");
         }
 
         private void Print_Whiskers()
         {
-            Console.WriteLine($"Total Whiskers : {whiskers.Count}");
-            whiskers.Sort();
-            var whisker_change_indicator = -1;
-            foreach (Whisker whisker in whiskers)
+            using (StreamWriter sw = File.AppendText(pathString))
             {
-                if (whisker.ConnectedValue > whisker_change_indicator)
+                sw.WriteLine($"Total Whiskers : {whiskers.Count}");
+                whiskers.Sort();
+                var whisker_change_indicator = -1;
+                foreach (Whisker whisker in whiskers)
                 {
-                    whisker_change_indicator = whisker.ConnectedValue;
-                    Console.WriteLine("----------------------------------------");
+                    if (whisker.ConnectedValue > whisker_change_indicator)
+                    {
+                        whisker_change_indicator = whisker.ConnectedValue;
+                        sw.WriteLine("----------------------------------------");
+                    }
+                    sw.Write(whisker.ToString());
+                    if (!whisker.connected_to_orbit) sw.WriteLine("*");
+                    else sw.WriteLine();
                 }
-                Console.Write(whisker.ToString());
-                if (!whisker.connected_to_orbit) Console.WriteLine("*");
-                else Console.WriteLine();
             }
         }
         
@@ -232,28 +253,31 @@ namespace orbits_generator
 
         public void Print_Analytics()
         {
-            Console.WriteLine("\n----------------------------------------");
-            Console.WriteLine("Orbit Analytics");
-            Console.WriteLine("----------------------------------------");
-
-            int current_orbit_size = orbits[0].cycles;
-            int count = 0;
-
-            foreach (var orbit in orbits)
+            using (StreamWriter sw = File.AppendText(pathString))
             {
-                if (orbit.cycles != current_orbit_size)
+                sw.WriteLine("\n----------------------------------------");
+                sw.WriteLine("Orbit Analytics");
+                sw.WriteLine("----------------------------------------");
+
+                int current_orbit_size = orbits[0].cycles;
+                int count = 0;
+
+                foreach (var orbit in orbits)
                 {
-                    if (current_orbit_size == 1)
-                        Console.WriteLine($"Fixed Points: {count}");
-                    else
-                        Console.WriteLine($"{current_orbit_size}-Cycle Orbits: {count}");
-                    current_orbit_size = orbit.cycles;
-                    count = 1;
+                    if (orbit.cycles != current_orbit_size)
+                    {
+                        if (current_orbit_size == 1)
+                            sw.WriteLine($"Fixed Points: {count}");
+                        else
+                            sw.WriteLine($"{current_orbit_size}-Cycle Orbits: {count}");
+                        current_orbit_size = orbit.cycles;
+                        count = 1;
+                    }
+                    else count++;
                 }
-                else count++;
+                sw.WriteLine($"{current_orbit_size}-Cycle Orbits: {count}");
+                sw.WriteLine("----------------------------------------\n");
             }
-            Console.WriteLine($"{current_orbit_size}-Cycle Orbits: {count}");
-            Console.WriteLine("----------------------------------------\n");
         }
 
         private void Close_Orbit()
